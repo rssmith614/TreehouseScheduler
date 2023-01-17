@@ -16,3 +16,6 @@ VALUES(1, 'Mon', '02:30', '03:30');
 UPDATE Tutor_Availability
 SET finish = '06:30'
 WHERE tutor_id = 1;
+
+-- reset autoincrement
+update sqlite_sequence set seq=1 where name = 'Student';
