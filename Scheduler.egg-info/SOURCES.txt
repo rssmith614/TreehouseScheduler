@@ -1,0 +1,9 @@
+README.md
+setup.py
+Scheduler/__init__.py
+Scheduler/studentviews.py
+Scheduler.egg-info/PKG-INFO
+Scheduler.egg-info/SOURCES.txt
+Scheduler.egg-info/dependency_links.txt
+Scheduler.egg-info/requires.txt
+Scheduler.egg-info/top_level.txt

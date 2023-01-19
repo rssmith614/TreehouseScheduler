@@ -1,10 +1,6 @@
-from flask import Flask, request
-import sqlite3
+from flask import request
+from Scheduler import app, db
 from sqlite3 import Error
-
-app = Flask(__name__)
-
-db = sqlite3.connect('./data.sqlite', check_same_thread=False)
 
 @app.route('/')
 def index():
@@ -53,5 +49,20 @@ def deleteStudent(id):
 
     return ''
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route('/addstudentavailability/<id>', methods=['POST'])
+def addStudentAvailability(id):
+    try:
+        sql= """
+            INSERT INTO Student_Availability
+            VALUES(?, ?, ?, ?);
+        """
+
+        args = [id, request.json['day'], request.json['start'], request.json['finish']]
+
+        db.execute(sql, args)
+        db.commit()
+
+    except Error as e:
+        print(e)
+    
+    return ''

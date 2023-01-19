@@ -1,3 +1,5 @@
+BEGIN;
+-- PRAGMA foreign_keys = ON;
 DROP TABLE Student;
 DROP TABLE Student_Availability;
 DROP TABLE Tutor;
@@ -31,14 +33,14 @@ CREATE TABLE Student (
 );
 
 CREATE TABLE Student_Availability (
-    student_id  REFERENCES Student(id),
+    student_id  INTEGER REFERENCES Student(id),
     day         VARCHAR,
     start       VARCHAR,
     finish      VARCHAR,
-    CHECK (
-        start LIKE '__:__' AND
-        finish LIKE '__:__'
-    )
+    CHECK (start LIKE '_:__'),
+    CHECK (finish LIKE '_:__'),
+    CHECK (day IN ('M', 'T', 'W', 'R', 'F')),
+    UNIQUE (student_id, day, start, finish)
 );
 
 CREATE TABLE Tutor (
@@ -91,3 +93,5 @@ CREATE TABLE Evaluation (
     attendance  VARCHAR,
     comment     VARCHAR
 );
+COMMIT;
+PRAGMA foreign_keys = ON;
