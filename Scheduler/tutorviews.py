@@ -44,3 +44,46 @@ def deleteTutor(id):
         print(e)
 
     return ''
+
+@app.route('/addtutoravailability/<id>', methods=['POST'])
+def addTutorAvailability(id):
+    try:
+        sql= """
+            INSERT INTO Tutor_Availability
+            VALUES(?, ?, ?, ?);
+        """
+
+        args = [id, request.json['day'], request.json['start'], request.json['finish']]
+
+        db.execute(sql, args)
+        db.commit()
+
+    except Error as e:
+        print(e)
+    
+    return ''
+
+@app.route('/tutorswithavailability', methods=['GET'])
+def tutorsWithAvailability():
+    try:
+        start = request.json['start']
+        day = request.json['day']
+
+        sql = """
+            SELECT * FROM View_Tutor_Availability
+            WHERE
+                start = ? AND
+                day = ?;"""
+
+        cur = db.cursor()
+        cur.execute(sql, [start, day])
+
+        rows = cur.fetchall()
+
+        return rows
+
+    except Error as e:
+        print(e)
+
+
+    return ''

@@ -18,4 +18,4 @@ SET finish = '06:30'
 WHERE tutor_id = 1;
 
 -- reset autoincrement
-update sqlite_sequence set seq=1 where name = 'Student';
+update sqlite_sequence set seq=1 where name = 'Tutor';

@@ -60,10 +60,10 @@ CREATE TABLE Tutor_Availability (
     day         VARCHAR,
     start       VARCHAR,
     finish      VARCHAR,
-    CHECK (
-        start LIKE '__:__' AND
-        finish LIKE '__:__'
-    )
+    CHECK (start LIKE '_:__'),
+    CHECK (finish LIKE '_:__'),
+    CHECK (day IN ('M', 'T', 'W', 'R', 'F')),
+    UNIQUE (tutor_id, day, start, finish)
 );
 
 CREATE TABLE Assessment (
@@ -83,8 +83,8 @@ CREATE TABLE Session (
     start       VARCHAR,
     finish      VARCHAR,
     CHECK  (
-        start LIKE '__:__'  AND
-        finish LIKE '__:__'
+        start LIKE '_:__'  AND
+        finish LIKE '_:__'
     )
 );
 
@@ -95,3 +95,15 @@ CREATE TABLE Evaluation (
 );
 COMMIT;
 PRAGMA foreign_keys = ON;
+
+CREATE VIEW View_Student_Availability(name, day, start, finish) AS
+SELECT name, day, start, finish
+FROM Student, Student_Availability
+WHERE
+    student_id = id;
+
+CREATE VIEW View_Tutor_Availability(name, day, start, finish) AS
+SELECT name, day, start, finish
+FROM Tutor, Tutor_Availability
+WHERE
+    tutor_id = id;

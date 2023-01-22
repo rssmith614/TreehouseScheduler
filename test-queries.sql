@@ -1,13 +1,11 @@
 -- What tutors has tutor X worked with
 SELECT DISTINCT Tutor.name
 FROM
-    Session,
-    Student,
-    Tutor
+    Session, Student, Tutor
 WHERE
     Session.student_id = Student.id AND
     Session.tutor_id = Tutor.id AND
-    Student.name = 'X';
+    Student.name = 'Ramsay Melby';
 
 -- On which days are Student X scheduled
 SELECT Session.date
@@ -31,9 +29,22 @@ WHERE
     -- sessions after today
     Session.date > DATE();
 
-SELECT Tutor.name, Tutor_Availability.*
+-- How many times has each Tutor worked with each Student
+SELECT Tutor.name as Tutor, Student.name as Student, count()
 FROM
-    Tutor,
-    Tutor_Availability
+    Session, Student, Tutor
 WHERE
-    Tutor.id = Tutor_Availability.tutor_id;
+    Session.student_id = Student.id AND
+    Session.tutor_id = Tutor.id
+GROUP BY
+    Tutor.name, Student.name;
+
+-- How many times has each Student worked with each Tutor
+SELECT Student.name as Student, Tutor.name as Tutor, count()
+FROM
+    Session, Student, Tutor
+WHERE
+    Session.student_id = Student.id AND
+    Session.tutor_id = Tutor.id
+GROUP BY
+    Student.name, Tutor.name;
