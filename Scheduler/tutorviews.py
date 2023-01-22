@@ -68,15 +68,34 @@ def tutorsWithAvailability():
     try:
         start = request.json['start']
         day = request.json['day']
+        student = request.json['student_id']
 
         sql = """
-            SELECT * FROM View_Tutor_Availability
-            WHERE
-                start = ? AND
-                day = ?;"""
+            SELECT available_tutors.tid as Tutor_id, day, start, finish, IFNULL(num_sessions, 0) as times_with_student
+            FROM
+                (SELECT Tutor.id as tid, day, start, finish
+                FROM
+                    Tutor, Tutor_Availability
+                WHERE
+                    Tutor.id = Tutor_Availability.tutor_id AND
+                    start <= ? AND
+                    finish > ? AND
+                    day = ?) available_tutors
+                LEFT OUTER JOIN
+                (SELECT Tutor.id as tid, Student.id as sid, count() as num_sessions
+                FROM
+                    Session, Student, Tutor
+                WHERE
+                    Session.student_id = Student.id AND
+                    Session.tutor_id = Tutor.id AND
+                    sid = ?
+                GROUP BY
+                    tid, Student.name) session_counts
+                ON available_tutors.tid = session_counts.tid
+            ORDER BY times_with_student DESC;"""
 
         cur = db.cursor()
-        cur.execute(sql, [start, day])
+        cur.execute(sql, [start, start, day, student])
 
         rows = cur.fetchall()
 
