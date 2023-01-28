@@ -30,14 +30,45 @@ def createtutor():
 
     return ''
 
+@app.route('/edittutor/<id>', methods=['PUT'])
+def editTutor(id):
+    try:
+        attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'comment']
+
+        setStmt = ''
+        args = []
+
+        for attribute in attributes:
+            if attribute in request.json:
+                if request.json[attribute] != '':
+                    setStmt += attribute + ' = ?, '
+                    args.append(request.json[attribute])
+
+        setStmt = setStmt[:len(setStmt)-2]
+
+        sql = """
+            UPDATE Tutor
+            SET {}
+            WHERE id = ?;""".format(setStmt)
+
+        args.append(id)
+
+        db.execute(sql, args)
+        db.commit()
+
+    except Error as e:
+        print(e)
+
+    return ''
+
 @app.route('/deletetutor/<id>', methods=['DELETE'])
 def deleteTutor(id):
     try:
         sql = """
             DELETE FROM Tutor
-            WHERE id = ?"""
+            WHERE id = ?;"""
 
-        db.execute(sql, id)
+        db.execute(sql, [id])
         db.commit()
 
     except Error as e:
@@ -62,6 +93,49 @@ def addTutorAvailability(id):
         print(e)
     
     return ''
+
+@app.route('/edittutoravailability/<id>', methods=['PUT'])
+def editTutorAvailability(id):
+    try:
+        oldStart = request.json['oldStart']
+        oldFinish = request.json['oldFinish']
+        newStart = request.json['newStart']
+        newFinish = request.json['newFinish']
+        day = request.json['day']
+
+        sql = """
+            UPDATE Tutor_Availability
+            SET start = ? AND finish = ?
+            WHERE tutor_id = ? AND day = ? AND start = ? AND finish = ?;"""
+
+        args = [newStart, newFinish, id, day, oldStart, oldFinish]
+
+        db.execute(sql, args)
+        db.commit()
+
+    except Error as e:
+        print(e)    
+
+    return ''
+
+@app.route('/removetutoravailability/<id>', methods=['DELETE'])
+def removeTutorAvailability(id):
+    try:
+        day = request.json['day']
+        start = request.json['start']
+        finish = request.json['finish']
+
+        sql = """
+            DELETE FROM Tutor_Availability
+            WHERE tutor_id = ? AND day = ? AND start = ? AND finish = ?;"""
+
+        args = [id, day, start, finish]
+
+        db.execute(sql, args)
+        db.commit()
+
+    except Error as e:
+        print(e)
 
 @app.route('/tutorswithavailability', methods=['GET'])
 def tutorsWithAvailability():
