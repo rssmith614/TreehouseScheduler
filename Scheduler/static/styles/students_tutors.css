@@ -1,0 +1,18 @@
+/* table {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+thead {
+    flex-basis: 100%;
+}
+
+tbody {
+display: flex;
+flex-wrap: wrap;
+flex-basis: 100%;
+}
+
+td, th, input {
+flex-basis: 25%;
+} */

@@ -62,11 +62,12 @@ function searchStudentsByName() {
     xhr.onload = function() {
         data = JSON.parse(this.response);
         res = "";
-        header = ['id', 'name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment'];
+        header = ['name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment'];
 
         data.forEach(student => {
             res += "<tr>";
             res += "<td><button onclick=\"deleteStudent(" + student['id'] + ")\">Delete</button></td>";
+            res += "<td><a href=\"studentinfo/" + student['id'] + "\">" + student['id'] + "</a></td>";
             header.forEach(att => {
                 res += "<td>" + student[att] + "</td>";
             });
@@ -88,4 +89,21 @@ function deleteStudent(id) {
     }
 
     xhr.send();
+}
+
+function updateStudent() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", "/editstudent/" + document.getElementById("studentid").innerHTML);
+    data = {};
+    attributes = ['name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment'];
+    attributes.forEach(att => {
+        data[att] = document.getElementById(att).value;
+    });
+
+    xhr.onload = function() {
+        document.getElementById("updateResult").innerHTML = "Done!";
+    }
+
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.send(JSON.stringify(data));
 }

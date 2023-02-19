@@ -53,11 +53,39 @@ def searchTutors():
         for tutor in rows:
             cur = {}
             for name, att in zip(header, tutor):
-                cur.update({name: att})
+                if att:
+                    cur.update({name: att})
+                else:
+                    cur.update({name: ''})
             res.append(cur)
 
         return jsonify(res), 200
 
+    except Error as e:
+        print(e)
+        return abort(404)
+    
+@app.route('/tutorinfo/<tutorid>', methods=['GET'])
+def tutorInfo(tutorid):
+    try:
+        res = {}
+        header = ['id', 'name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'comment']
+
+        sql = """
+            SELECT * FROM Tutor
+            WHERE id = ?"""
+        
+        cur = db.cursor()
+        cur.execute(sql, [tutorid])
+
+        for name, att in zip(header, cur.fetchone()):
+            if att:
+                res.update({name: att})
+            else:
+                res.update({name: ''})
+
+        return render_template('tutor_info.html', tutor=res)
+    
     except Error as e:
         print(e)
         return abort(404)
@@ -72,9 +100,8 @@ def editTutor(id):
 
         for attribute in attributes:
             if attribute in request.json:
-                if request.json[attribute] != '':
-                    setStmt += attribute + ' = ?, '
-                    args.append(request.json[attribute])
+                setStmt += attribute + ' = ?, '
+                args.append(request.json[attribute])
 
         setStmt = setStmt[:len(setStmt)-2]
 
@@ -87,6 +114,8 @@ def editTutor(id):
 
         db.execute(sql, args)
         db.commit()
+
+        return {}, 201
 
     except Error as e:
         print(e)
@@ -212,3 +241,32 @@ def tutorsWithAvailability():
 
 
     return ''
+
+@app.route('/tutorsessionhistory/<tutorid>', methods=['GET'])
+def tutorSessionHistory(tutorid):
+    try:
+        res = []
+        header = ['student_name', 'date', 'start', 'finish']
+        sql = """
+            SELECT Student.name, date, start, finish
+            FROM Session, Student
+            WHERE
+                Session.student_id = Student.id AND
+                tutor_id = ?
+            ORDER BY date DESC;"""
+        
+        cur = db.cursor()
+        cur.execute(sql, [tutorid])
+        rows = cur.fetchall()
+
+        for session in rows:
+            cur = {}
+            for att, val in zip(header, session):
+                cur.update({att: val})
+            res.append(cur)
+
+        return jsonify(res), 200
+
+    except Error as e:
+        print(e)
+        return abort(404)

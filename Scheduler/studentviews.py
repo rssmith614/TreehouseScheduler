@@ -58,11 +58,41 @@ def searchStudents():
         for student in rows:
             cur = {}
             for name, att in zip(header, student):
-                cur.update({name: att})
+                if att:
+                    cur.update({name: att})
+                else:
+                    cur.update({name: ''})
             res.append(cur)
 
         return jsonify(res), 200
 
+    except Error as e:
+        print(e)
+        return abort(404)
+    
+@app.route('/studentinfo/<studentid>', methods=['GET'])
+def studentInfo(studentid):
+    try:
+        res = {}
+        header = ['id', 'name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment']
+
+        sql = """
+            SELECT * FROM Student
+            WHERE id = ?"""
+        
+        cur = db.cursor()
+        cur.execute(sql, [studentid])
+
+        for name, att in zip(header, cur.fetchone()):
+            if att:
+                res.update({name: att})
+            else:
+                res.update({name: ''})
+            
+        print(res)
+
+        return render_template('student_info.html', student=res)
+    
     except Error as e:
         print(e)
         return abort(404)

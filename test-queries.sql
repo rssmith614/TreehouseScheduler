@@ -78,3 +78,9 @@ FROM
         tid, Student.name) session_counts
     ON available_tutors.tid = session_counts.tid
 ORDER BY times_with_student DESC;
+
+SELECT Student.name, date, start, finish
+FROM Session, Student
+WHERE
+    Session.student_id = Student.id AND
+    tutor_id = ?;

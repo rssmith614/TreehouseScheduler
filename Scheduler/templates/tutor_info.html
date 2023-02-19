@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<head>
+
+</head>
+<body onload="showSessions()">
+    <h1>Tutor Info Page</h1>
+    <h2>{{ tutor.name }}</h2>
+    <button onclick="window.location.href= '/manage_tutors'">Back</button>
+    <br>
+    <h2>Edit Tutor</h2>
+    <table>
+        <thead>
+            <th>Tutor ID</th>
+            <th>Name</th>
+            <th>Nickname</th>
+            <th>Primary Phone</th>
+            <th>Personal Email</th>
+            <th>Work Email</th>
+            <th>Hire Date</th>
+            <th>DOB</th>
+            <th>Comment</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="tutorid">{{ tutor.id }}</td>
+                <td><input type="text" id="name" value="{{ tutor.name }}"></td>
+                <td><input type="text" id="nickname" value="{{ tutor.nickname }}"></td>
+                <td><input type="text" id="primary_phone" value="{{ tutor.primary_phone }}"></td>
+                <td><input type="text" id="personal_email" value="{{ tutor.personal_email }}"></td>
+                <td><input type="text" id="work_email" value="{{ tutor.work_email }}"></td>
+                <td><input type="text" id="hire_date" value="{{ tutor.hire_date }}"></td>
+                <td><input type="text" id="dob" value="{{ tutor.dob }}"></td>
+                <td><textarea type="text" id="comment">{{ tutor.comment }}</textarea></td>
+            </tr>
+        </tbody>
+    </table>
+    <button onclick="updateTutor()">Update!</button>
+    <label id="updateResult"></label>
+
+    <br>
+    <h2>Session History</h2>
+    <table>
+        <thead>
+            <th>Student</th>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+        </thead>
+        <tbody id="sessions">
+
+        </tbody>
+    </table>
+
+    <br>
+    <h2>Current Availability</h2>
+</body>
+
+<script src="{{ url_for('static', filename='manage_tutors.js') }}"></script>
