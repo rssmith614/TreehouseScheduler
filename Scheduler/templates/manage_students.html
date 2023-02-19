@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<head>
+    
+</head>
+<body onload="searchStudentsByName()">
+    <h1>
+        Student Management Page
+    </h1>
+    
+    <h2>Student Table</h2>
+    <input id="search_name" onkeyup="searchStudentsByName()">
+    <button onclick="searchStudentsByName()">Search</button>
+    <table>
+        <thead>
+            <th></th>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Nickname</th>
+            <th>Parent Name</th>
+            <th>Primary Phone</th>
+            <th>Grade</th>
+            <th>School</th>
+            <th>DOB</th>
+            <th>Reason</th>
+            <th>Subjects</th>
+            <th>GPA</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Emergency Contact Name</th>
+            <th>Emergency Contact Relation</th>
+            <th>Emergency Contact Phone</th>
+            <th>Pickup Person Name</th>
+            <th>Pickup Person Relation</th>
+            <th>Pickup Person Phone</th>
+            <th>Medical Comment</th>
+            <th>Comment</th>
+        </thead>
+        <tbody id="students_table">
+
+        </tbody>
+    </table>
+
+    <h2>Create new Student</h2><br>
+    <form onsubmit="createStudent(); searchStudentsByName(); return false;">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+      
+        <label for="nickname">Nickname:</label>
+        <input type="text" id="nickname" name="nickname"><br>
+      
+        <label for="parent_name">Parent Name:</label>
+        <input type="text" id="parent_name" name="parent_name" required><br>
+      
+        <label for="primary_phone">Primary Phone:</label>
+        <input type="text" id="primary_phone" name="primary_phone" required><br>
+      
+        <label for="grade">Grade:</label>
+        <input type="text" id="grade" name="grade"><br>
+      
+        <label for="school">School:</label>
+        <input type="text" id="school" name="school"><br>
+      
+        <label for="dob">Date of Birth:</label>
+        <input type="text" id="dob" name="dob"><br>
+      
+        <label for="reason">Reason for Enrollment:</label>
+        <input type="text" id="reason" name="reason"><br>
+      
+        <label for="subjects">Subjects of Interest:</label>
+        <input type="text" id="subjects" name="subjects"><br>
+      
+        <label for="gpa">GPA:</label>
+        <input type="text" id="gpa" name="gpa"><br>
+      
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address"><br>
+      
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+      
+        <label for="e_contact_name">Emergency Contact Name:</label>
+        <input type="text" id="e_contact_name" name="e_contact_name"><br>
+      
+        <label for="e_contact_relation">Emergency Contact Relationship:</label>
+        <input type="text" id="e_contact_relation" name="e_contact_relation"><br>
+      
+        <label for="e_contact_phone">Emergency Contact Phone:</label>
+        <input type="text" id="e_contact_phone" name="e_contact_phone"><br>
+      
+        <label for="pickup_person">Person Authorized to Pick Up Student:</label>
+        <input type="text" id="pickup_person" name="pickup_person"><br>
+      
+        <label for="pickup_relation">Relationship to Pickup Person:</label>
+        <input type="text" id="pickup_relation" name="pickup_relation"><br>
+      
+        <label for="pickup_phone">Pickup Person Phone:</label>
+        <input type="text" id="pickup_phone" name="pickup_phone"><br>
+      
+        <label for="medical_comment">Medical Comments:</label>
+        <textarea id="medical_comment" name="medical_comment"></textarea><br>
+      
+        <label for="comment">Comments:</label>
+        <textarea id="comment" name="comment"></textarea><br>
+      
+        <input type="submit" value="Submit">
+    </form>
+
+    <button onclick="window.location.href= '/'">Back</button>
+</body>
+
+<script src="{{ url_for('static', filename='manage_students.js') }}"></script>

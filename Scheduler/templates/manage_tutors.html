@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<head>
+
+</head>
+<body onload="searchTutorsByName()">
+    <h1>
+        Tutor Management Page
+    </h1>
+
+    <h2>Tutor Table</h2>
+    <input id="search_name" onkeyup="searchTutorsByName()">
+    <button onclick="searchTutorsByName()">Search</button>
+    <table>
+        <thead>
+            <th></th>
+            <th>Tutor ID</th>
+            <th>Name</th>
+            <th>Nickname</th>
+            <th>Primary Phone</th>
+            <th>Personal Email</th>
+            <th>Work Email</th>
+            <th>Hire Date</th>
+            <th>DOB</th>
+            <th>Comment</th>
+        </thead>
+        <tbody id="tutors_table">
+
+        </tbody>
+    </table>
+
+    <h2>Create New Tutor</h2>
+    <form onsubmit="createTutor(); searchTutorsByName(); return false;">
+        <label for="name">Name:</label>
+        <input type="text" id="name"><br>
+  
+        <label for="nickname">Nickname:</label>
+        <input type="text" id="nickname"><br>
+  
+        <label for="primary_phone">Primary Phone:</label>
+        <input type="text" id="primary_phone"><br>
+  
+        <label for="personal_email">Personal Email:</label>
+        <input type="text" id="personal_email"><br>
+  
+        <label for="work_email">Work Email:</label>
+        <input type="text" id="work_email"><br>
+  
+        <label for="hire_date">Hire Date:</label>
+        <input type="text" id="hire_date"><br>
+  
+        <label for="dob">Date of Birth:</label>
+        <input type="text" id="dob"><br>
+  
+        <label for="comment">Comment:</label>
+        <textarea type="text" id="comment"></textarea><br>
+  
+        <input type="submit" value="Submit">
+    </form>
+
+    <button onclick="window.location.href= '/'">Back</button>
+</body>
+
+<script src="{{ url_for('static', filename='manage_tutors.js') }}"></script>

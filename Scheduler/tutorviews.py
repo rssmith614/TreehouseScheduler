@@ -1,6 +1,10 @@
-from flask import request
+from flask import request, render_template, jsonify, abort
 from Scheduler import app, db
 from sqlite3 import Error
+
+@app.route('/manage_tutors')
+def manageTutors():
+    return render_template('manage_tutors.html')
 
 @app.route('/createtutor', methods=['POST'])
 def createtutor():
@@ -29,6 +33,34 @@ def createtutor():
         print(e)
 
     return ''
+
+@app.route('/searchtutors', methods=['GET'])
+def searchTutors():
+    try:
+        res = []
+        header = ['id', 'name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'comment']
+
+        sql = """
+            SELECT * FROM Tutor
+            WHERE name LIKE ?;
+        """
+
+        name = request.args.get('name')
+
+        cur = db.cursor()
+        rows = cur.execute(sql, ['%'+name+'%'])
+
+        for tutor in rows:
+            cur = {}
+            for name, att in zip(header, tutor):
+                cur.update({name: att})
+            res.append(cur)
+
+        return jsonify(res), 200
+
+    except Error as e:
+        print(e)
+        return abort(404)
 
 @app.route('/edittutor/<id>', methods=['PUT'])
 def editTutor(id):

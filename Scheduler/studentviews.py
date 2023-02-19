@@ -1,10 +1,14 @@
-from flask import request, make_response, abort
+from flask import request, make_response, abort, render_template, jsonify
 from Scheduler import app, db
 from sqlite3 import Error
 
 @app.route('/')
 def index():
-    return None
+    return render_template('index.html')
+
+@app.route('/manage_students')
+def manageStudents():
+    return render_template('manage_students.html')
 
 @app.route('/createstudent', methods=['POST'])
 def createStudent():
@@ -29,11 +33,39 @@ def createStudent():
 
         db.commit()
 
-        return 201
+        return {}, 201
         
     except Error as e:
         print(e)
         return abort(400)
+    
+@app.route('/searchstudents', methods=['GET'])
+def searchStudents():
+    try:
+        res = []
+        header = ['id', 'name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment']
+
+        sql = """
+            SELECT * FROM Student
+            WHERE name LIKE ?;
+        """
+
+        name = request.args.get('name')
+
+        cur = db.cursor()
+        rows = cur.execute(sql, ['%'+name+'%'])
+
+        for student in rows:
+            cur = {}
+            for name, att in zip(header, student):
+                cur.update({name: att})
+            res.append(cur)
+
+        return jsonify(res), 200
+
+    except Error as e:
+        print(e)
+        return abort(404)
 
 @app.route('/editstudent/<id>', methods=['PUT'])
 def editStudent(id):
@@ -61,7 +93,7 @@ def editStudent(id):
         db.execute(sql, args)
         db.commit()
 
-        return 200
+        return {}, 200
 
     except Error as e:
         print(e)
@@ -77,7 +109,7 @@ def deleteStudent(id):
         db.execute(sql, [id])
         db.commit()
 
-        return 200
+        return {}, 200
 
     except Error as e:
         print(e)
@@ -97,7 +129,7 @@ def addStudentAvailability(id):
         db.execute(sql, args)
         db.commit()
 
-        return 201
+        return {}, 201
 
     except Error as e:
         print(e)
@@ -122,7 +154,7 @@ def editStudentAvailability(id):
         db.execute(sql, args)
         db.commit()
 
-        return 200
+        return {}, 200
 
     except Error as e:
         print(e)    
@@ -144,7 +176,7 @@ def removeStudentAvailability(id):
         db.execute(sql, args)
         db.commit()
 
-        return 200
+        return {}, 200
 
     except Error as e:
         print(e)
