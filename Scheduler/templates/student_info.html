@@ -3,7 +3,7 @@
 <head>
 
 </head>
-<body>
+<body onload="showSessions(); showAvailability()">
     <h1>Student Info Page</h1>
     <h2>{{ student.name }}</h2>
     <button onclick="window.location.href= '/manage_students'">Back</button>
@@ -22,6 +22,25 @@
             <th>Reason</th>
             <th>Subjects</th>
             <th>GPA</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="studentid">{{ student.id }}</td>
+                <td><input type="text" id="name" value="{{ student.name }}"></td>
+                <td><input type="text" id="nickname" value="{{ student.nickname }}"></td>
+                <td><input type="text" id="parent_name" value="{{ student.parent_name }}"></td>
+                <td><input type="text" id="primary_phone" value="{{ student.primary_phone }}"></td>
+                <td><input type="text" id="grade" value="{{ student.grade }}"></td>
+                <td><input type="text" id="school" value="{{ student.school }}"></td>
+                <td><input type="text" id="dob" value="{{ student.dob }}"></td>
+                <td><input type="text" id="reason" value="{{ student.reason }}"></td>
+                <td><input type="text" id="subjects" value="{{ student.subjects }}"></td>
+                <td><input type="text" id="gpa" value="{{ student.gpa }}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <header>
             <th>Address</th>
             <th>Email</th>
             <th>Emergency Contact Name</th>
@@ -32,41 +51,53 @@
             <th>Pickup Person Relation</th>
             <th>Medical Comment</th>
             <th>Comment</th>
-        </thead>
-        <tbody>
+        </header>
+        <body>
             <tr>
-                <td id="studentid">{{ student.id }}</td>
-                <td><input type="text" id="name" value="{{ student.name }}"></td>
-                <td><input type="text" id="nickname" value="{{ student.nickname }}"></td>
-                <td><input type="text" name="parent_name" value="{{ student.parent_name }}"></td>
-                <td><input type="text" name="primary_phone" value="{{ student.primary_phone }}"></td>
-                <td><input type="text" name="grade" value="{{ student.grade }}"></td>
-                <td><input type="text" name="school" value="{{ student.school }}"></td>
-                <td><input type="text" name="dob" value="{{ student.dob }}"></td>
-                <td><input type="text" name="reason" value="{{ student.reason }}"></td>
-                <td><input type="text" name="subjects" value="{{ student.subjects }}"></td>
-                <td><input type="text" name="gpa" value="{{ student.gpa }}"></td>
-                <td><input type="text" name="address" value="{{ student.address }}"></td>
-                <td><input type="text" name="email" value="{{ student.email }}"></td>
-                <td><input type="text" name="emergency_contact_name" value="{{ student.e_contact_name }}"></td>
-                <td><input type="text" name="emergency_contact_relation" value="{{ student.e_contact_relation }}"></td>
-                <td><input type="text" name="emergency_contact_phone" value="{{ student.e_contact_phone }}"></td>
-                <td><input type="text" name="pickup_person_name" value="{{ student.pickup_person_name }}"></td>
-                <td><input type="text" name="pickup_person_phone" value="{{ student.pickup_person_phone }}"></td>
-                <td><input type="text" name="pickup_person_relation" value="{{ student.pickup_person_relation }}"></td>
-                <td><textarea type="text" name="medical_comment">{{ student.medical_comment }}</textarea></td>
+                <td><input type="text" id="address" value="{{ student.address }}"></td>
+                <td><input type="text" id="email" value="{{ student.email }}"></td>
+                <td><input type="text" id="e_contact_name" value="{{ student.e_contact_name }}"></td>
+                <td><input type="text" id="e_contact_relation" value="{{ student.e_contact_relation }}"></td>
+                <td><input type="text" id="e_contact_phone" value="{{ student.e_contact_phone }}"></td>
+                <td><input type="text" id="pickup_person" value="{{ student.pickup_person_name }}"></td>
+                <td><input type="text" id="pickup_phone" value="{{ student.pickup_person_phone }}"></td>
+                <td><input type="text" id="pickup_relation" value="{{ student.pickup_person_relation }}"></td>
+                <td><textarea type="text" id="medical_comment">{{ student.medical_comment }}</textarea></td>
                 <td><textarea type="text" id="comment">{{ student.comment }}</textarea></td>
             </tr>
-        </tbody>
+        </body>
     </table>
-    <button onclick="updatestudent()">Update!</button>
+    <button onclick="updateStudent()">Update!</button>
     <label id="updateResult"></label>
 
     <br>
     <h2>Session History</h2>
+    <table>
+        <thead>
+            <th>Tutor</th>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+        </thead>
+        <tbody id="sessions">
+
+        </tbody>
+    </table>
 
     <br>
     <h2>Current Availability</h2>
+    <table>
+        <thead>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+        </thead>
+        <tbody id="availability">
+
+        </tbody>
+    </table>
 </body>
 
 <script src="{{ url_for('static', filename='manage_students.js') }}"></script>

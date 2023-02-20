@@ -88,8 +88,6 @@ def studentInfo(studentid):
                 res.update({name: att})
             else:
                 res.update({name: ''})
-            
-        print(res)
 
         return render_template('student_info.html', student=res)
     
@@ -211,3 +209,59 @@ def removeStudentAvailability(id):
     except Error as e:
         print(e)
         return abort(400)
+    
+@app.route('/studentavailability/<studentid>', methods=['GET'])
+def studentAvailability(studentid):
+    try:
+        res = []
+
+        header = ['day', 'start', 'finish']
+        sql = """
+            SELECT day, start, finish
+            FROM Student_Availability
+            WHERE student_id = ?
+            ORDER BY start;"""
+        
+        cur = db.cursor()
+        cur.execute(sql, [studentid])
+
+        for availability in cur.fetchall():
+            current = {}
+            for att, val in zip(header, availability):
+                current.update({att: val})
+            res.append(current)
+
+        return jsonify(res), 200
+
+    except Error as e:
+        print(e)
+        return abort(404)
+    
+@app.route('/studentsessionhistory/<studentid>', methods=['GET'])
+def studentSessionHistory(studentid):
+    try:
+        res = []
+        header = ['tutor_name', 'date', 'start', 'finish']
+        sql = """
+            SELECT Tutor.name, date, start, finish
+            FROM Session, Tutor
+            WHERE
+                Session.tutor_id = Tutor.id AND
+                student_id = ?
+            ORDER BY date DESC;"""
+        
+        cur = db.cursor()
+        cur.execute(sql, [studentid])
+        rows = cur.fetchall()
+
+        for session in rows:
+            cur = {}
+            for att, val in zip(header, session):
+                cur.update({att: val})
+            res.append(cur)
+
+        return jsonify(res), 200
+
+    except Error as e:
+        print(e)
+        return abort(404)

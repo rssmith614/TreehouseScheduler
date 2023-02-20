@@ -3,7 +3,7 @@
 <head>
 
 </head>
-<body onload="showSessions()">
+<body onload="showSessions(); showAvailability()">
     <h1>Tutor Info Page</h1>
     <h2>{{ tutor.name }}</h2>
     <button onclick="window.location.href= '/manage_tutors'">Back</button>
@@ -54,6 +54,18 @@
 
     <br>
     <h2>Current Availability</h2>
+    <table>
+        <thead>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+        </thead>
+        <tbody id="availability">
+
+        </tbody>
+    </table>
 </body>
 
 <script src="{{ url_for('static', filename='manage_tutors.js') }}"></script>

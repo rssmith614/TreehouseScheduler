@@ -97,7 +97,6 @@ function showSessions() {
 
     xhr.onload = function() {
         data = JSON.parse(this.response);
-        console.log(data);
         res = "";
         header = ['student_name', 'date', 'start', 'finish'];
 
@@ -110,6 +109,46 @@ function showSessions() {
         });
 
         document.getElementById("sessions").innerHTML = res;
+    }
+
+    xhr.send();
+}
+
+function showAvailability() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/tutoravailability/" + document.getElementById("tutorid").innerHTML);
+
+    xhr.onload = function() {
+        data = JSON.parse(this.response);
+        res = "";
+        height = 0
+        schedule = {
+            "M": [],
+            "T": [],
+            "W": [],
+            "R": [],
+            "F": []
+        };
+
+        data.forEach(availability => {
+            schedule[availability['day']].push(availability['start'] + "-" + availability['finish']);
+            height = Math.max(height, schedule[availability['day']].length)
+        });
+
+        while (height > 0) {
+            current = "<tr>"
+            for (var [day, availability] of Object.entries(schedule)) {
+                if (availability.length > 0) {
+                    current += "<td>" + availability.shift() + "</td>";
+                } else {
+                    current += "<td></td>";
+                }
+            }
+            res += current + "</tr>";
+            height -= 1;
+        }
+
+        document.getElementById("availability").innerHTML = res;
     }
 
     xhr.send();

@@ -198,6 +198,33 @@ def removeTutorAvailability(id):
     except Error as e:
         print(e)
 
+@app.route('/tutoravailability/<tutorid>', methods=['GET'])
+def tutorAvailability(tutorid):
+    try:
+        res = []
+
+        header = ['day', 'start', 'finish']
+        sql = """
+            SELECT day, start, finish
+            FROM Tutor_Availability
+            WHERE tutor_id = ?
+            ORDER BY start;"""
+        
+        cur = db.cursor()
+        cur.execute(sql, [tutorid])
+
+        for availability in cur.fetchall():
+            current = {}
+            for att, val in zip(header, availability):
+                current.update({att: val})
+            res.append(current)
+
+        return jsonify(res), 200
+
+    except Error as e:
+        print(e)
+        return abort(404)
+
 @app.route('/tutorswithavailability', methods=['GET'])
 def tutorsWithAvailability():
     try:

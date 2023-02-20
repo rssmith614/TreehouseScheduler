@@ -45,7 +45,6 @@
     <form onsubmit="createStudent(); searchStudentsByName(); return false;">
         <table>
             <thead>
-                <th>Student ID</th>
                 <th>Name</th>
                 <th>Nickname</th>
                 <th>Parent Name</th>
@@ -56,20 +55,9 @@
                 <th>Reason</th>
                 <th>Subjects</th>
                 <th>GPA</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Emergency Contact Name</th>
-                <th>Emergency Contact Relation</th>
-                <th>Emergency Contact Phone</th>
-                <th>Pickup Person Name</th>
-                <th>Pickup Person Phone</th>
-                <th>Pickup Person Relation</th>
-                <th>Medical Comment</th>
-                <th>Comment</th>
             </thead>
             <tbody>
                 <tr>
-                    <td id="studentid"></td>
                     <td><input type="text" id="name"></td>
                     <td><input type="text" id="nickname"></td>
                     <td><input type="text" name="parent_name"}}"></td>
@@ -80,6 +68,24 @@
                     <td><input type="text" name="reason"></td>
                     <td><input type="text" name="subjects"></td>
                     <td><input type="text" name="gpa"></td>
+                </tr>
+            </tbody>
+        </table>
+        <table>
+            <header>
+                <th>Address</th>
+                <th>Email</th>
+                <th>Emergency Contact Name</th>
+                <th>Emergency Contact Relation</th>
+                <th>Emergency Contact Phone</th>
+                <th>Pickup Person Name</th>
+                <th>Pickup Person Phone</th>
+                <th>Pickup Person Relation</th>
+                <th>Medical Comment</th>
+                <th>Comment</th>
+            </header>
+            <body>
+                <tr>
                     <td><input type="text" name="address"></td>
                     <td><input type="text" name="email"}></td>
                     <td><input type="text" name="emergency_contact_name"></td>
@@ -91,10 +97,10 @@
                     <td><textarea type="text" name="medical_comment"></textarea></td>
                     <td><textarea type="text" id="comment"></textarea></td>
                 </tr>
-            </tbody>
+            </body>
         </table>
       
-        <input type="submit"bmit">
+        <input type="submit" value="Submit!">
     </form>
 
     <br>
