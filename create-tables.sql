@@ -56,7 +56,7 @@ CREATE TABLE Tutor (
 );
 
 CREATE TABLE Tutor_Availability (
-    tutor_id  REFERENCES Tutor(id),
+    tutor_id    INTEGER REFERENCES Tutor(id),
     day         VARCHAR,
     start       VARCHAR,
     finish      VARCHAR,

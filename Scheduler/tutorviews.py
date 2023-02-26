@@ -1,6 +1,11 @@
 from flask import request, render_template, jsonify, abort
-from Scheduler import app, db
+from Scheduler import app, db, updateTutorAvailability
 from sqlite3 import Error
+
+@app.route('/test')
+def test():
+    updateTutorAvailability.eventsFromDB()
+    return '200'
 
 @app.route('/manage_tutors')
 def manageTutors():

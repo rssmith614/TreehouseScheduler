@@ -7,3 +7,4 @@ db = sqlite3.connect('Scheduler/instance/data.sqlite', check_same_thread=False)
 
 import Scheduler.studentviews
 import Scheduler.tutorviews
+import Scheduler.updateTutorAvailability
