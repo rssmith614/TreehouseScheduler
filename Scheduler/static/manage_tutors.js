@@ -6,6 +6,8 @@ function createTutor() {
     var work_email = document.getElementById("work_email").value;
     var hire_date = document.getElementById("hire_date").value;
     var dob = document.getElementById("dob").value;
+    var avail_calendar = document.getElementById("avail_calendar").value;
+    var sched_calendar = document.getElementById("sched_calendar").value;
     var comment = document.getElementById("comment").value;
 
     var tutor = {
@@ -16,6 +18,8 @@ function createTutor() {
       "work_email": work_email,
       "hire_date": hire_date,
       "dob": dob,
+      "avail_calendar": avail_calendar,
+      "sched_calendar": sched_calendar,
       "comment": comment
     };
 
@@ -30,6 +34,8 @@ function createTutor() {
         document.getElementById("work_email").value = "";
         document.getElementById("hire_date").value = "";
         document.getElementById("dob").value = "";
+        document.getElementById("avail_calendar").value = "";
+        document.getElementById("sched_calendar").value = "";
         document.getElementById("comment").value = "";
     }
 
@@ -45,22 +51,37 @@ function searchTutorsByName() {
     xhr.onload = function() {
         data = JSON.parse(this.response);
         res = "";
-        header = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'comment'];
+        header = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment'];
 
         data.forEach(tutor => {
             res += "<tr>";
             res += "<td><button onclick=\"deleteTutor(" + tutor['id'] + ")\">Delete</button></td>";
             res += "<td><a href=\"tutorinfo/" + tutor['id'] + "\">" + tutor['id'] + "</a></td>";
             header.forEach(att => {
-                res += "<td>" + tutor[att] + "</td>";
+                if (att === "avail_calendar" || att === "sched_calendar") {
+                    if (tutor[att] != "") {
+                        console.log("<td><button onclick=\"copyLink(\"" + tutor[att] + "\")\">Calendar Link</button></td>");
+                        res += "<td><button onclick=\"copyLink(\'" + tutor[att] + "\')\">Calendar Link</button></td>";
+                    } else {
+                        res += "<td></td>"
+                    }
+                } else {
+                    res += "<td>" + tutor[att] + "</td>";
+                }
             });
             res += "</tr>";
         });
+        
 
         document.getElementById("tutors_table").innerHTML = res;
     }
 
     xhr.send();
+}
+
+function copyLink(link) {
+    navigator.clipboard.writeText(link);
+    alert("Copied link to calendar");
 }
 
 function deleteTutor(id) {
@@ -78,7 +99,7 @@ function updateTutor() {
     var xhr = new XMLHttpRequest();
     xhr.open("PUT", "/edittutor/" + document.getElementById("tutorid").innerHTML);
     data = {};
-    attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'comment'];
+    attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment'];
     attributes.forEach(att => {
         data[att] = document.getElementById(att).value;
     });
@@ -149,6 +170,17 @@ function showAvailability() {
         }
 
         document.getElementById("availability").innerHTML = res;
+    }
+
+    xhr.send();
+}
+
+function fetchAvailability() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/fetchtutoravailability/" + document.getElementById("tutorid").innerHTML);
+
+    xhr.onload = function () {
+        showAvailability();
     }
 
     xhr.send();

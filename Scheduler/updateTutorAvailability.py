@@ -15,7 +15,7 @@ from sqlite3 import Error
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-def DBFromEvents():
+def DBFromEvents(id):
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
@@ -43,15 +43,22 @@ def DBFromEvents():
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         oneWeekFromNow = (datetime.datetime.utcnow() + datetime.timedelta(days=7)).isoformat() + 'Z'
+
+        sql = """
+            SELECT avail_calendar FROM Tutor WHERE id = ?"""
+        cur = db.cursor()
+        cur.execute(sql, [id])
+
+        calendarId = cur.fetchone()[0]
         
-        events_result = service.events().list(calendarId='53de60a48673fc2ffb7b5a50dea2c82bdb96ea335f2bbacf1e9039d9b0177c4f@group.calendar.google.com', timeMin=now,
+        events_result = service.events().list(calendarId=calendarId, timeMin=now,
                                               timeMax=oneWeekFromNow, singleEvents=True,
                                               orderBy='startTime').execute()
         events = events_result.get('items', [])
 
         sql = """
-                DELETE FROM Tutor_Availability WHERE tutor_id = 13;"""
-        db.execute(sql)
+                DELETE FROM Tutor_Availability WHERE tutor_id = ?;"""
+        db.execute(sql, [id])
 
         for event in events:
             start = event['start'].get('dateTime')
@@ -67,17 +74,18 @@ def DBFromEvents():
 
             sql = """
                 INSERT INTO Tutor_Availability(tutor_id, day, start, finish)
-                VALUES(13, ?, ?, ?);"""
-            db.execute(sql, [weekday, start, end])
+                VALUES(?, ?, ?, ?);"""
+            db.execute(sql, [id, weekday, start, end])
 
             db.commit()
 
     except HttpError as error:
         print('An error occurred: %s' % error)
+        return error.status_code
     except Error as e:
         print(e)
 
-def eventsFromDB():
+def eventsFromDB(id):
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
@@ -102,11 +110,18 @@ def eventsFromDB():
     try:
         service = build('calendar', 'v3', credentials=creds)
 
+        sql = """
+            SELECT avail_calendar FROM Tutor WHERE id = ?"""
+        cur = db.cursor()
+        cur.execute(sql, [id])
+
+        calendarId = cur.fetchone()[0]
+
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-        sql = """SELECT * FROM Tutor_Availability WHERE tutor_id = 13;"""
+        sql = """SELECT * FROM Tutor_Availability WHERE tutor_id = ?;"""
         cur = db.cursor()
-        cur.execute(sql)
+        cur.execute(sql, [id])
 
         for availablity in cur.fetchall():
             # format 2023-02-25T09:00:00-07:00
@@ -125,7 +140,7 @@ def eventsFromDB():
                 }
             }
             # print(date, start, end)
-            event = service.events().insert(calendarId='53de60a48673fc2ffb7b5a50dea2c82bdb96ea335f2bbacf1e9039d9b0177c4f@group.calendar.google.com', body=event).execute()
+            event = service.events().insert(calendarId=calendarId, body=event).execute()
             print('event created:', event.get('htmlLink'))
 
     except HttpError as error:

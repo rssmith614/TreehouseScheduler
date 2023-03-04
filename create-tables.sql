@@ -45,14 +45,16 @@ CREATE TABLE Student_Availability (
 
 CREATE TABLE Tutor (
     id              INTEGER PRIMARY KEY  AUTOINCREMENT,
-    name            VARCHAR,
-    nickname        VARCHAR,
-    primary_phone   VARCHAR,
-    personal_email  VARCHAR,
-    work_email      VARCHAR,
+    name            TEXT,
+    nickname        TEXT,
+    primary_phone   TEXT,
+    personal_email  TEXT,
+    work_email      TEXT,
     hire_date       DATE,
     dob             DATE,
-    comment         VARCHAR
+    avail_calendar  TEXT,
+    sched_calendar  TEXT,
+    comment         TEXT
 );
 
 CREATE TABLE Tutor_Availability (

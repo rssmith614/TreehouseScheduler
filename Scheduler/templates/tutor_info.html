@@ -19,6 +19,8 @@
             <th>Work Email</th>
             <th>Hire Date</th>
             <th>DOB</th>
+            <th>Availability Calendar Link</th>
+            <th>Schedule Calendar Link</th>
             <th>Comment</th>
         </thead>
         <tbody>
@@ -31,6 +33,8 @@
                 <td><input type="text" id="work_email" value="{{ tutor.work_email }}"></td>
                 <td><input type="text" id="hire_date" value="{{ tutor.hire_date }}"></td>
                 <td><input type="text" id="dob" value="{{ tutor.dob }}"></td>
+                <td><input type="text" id="avail_calendar" value="{{ tutor.avail_calendar }}"></td>
+                <td><input type="text" id="sched_calendar" value="{{ tutor.sched_calendar }}"></td>
                 <td><textarea type="text" id="comment">{{ tutor.comment }}</textarea></td>
             </tr>
         </tbody>
@@ -66,6 +70,8 @@
 
         </tbody>
     </table>
+
+    <button onclick="fetchAvailability()">Fetch Availability From Google Calendar</button>
 </body>
 
 <script src="{{ url_for('static', filename='manage_tutors.js') }}"></script>

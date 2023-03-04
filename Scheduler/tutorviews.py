@@ -1,10 +1,14 @@
-from flask import request, render_template, jsonify, abort
+from flask import request, render_template, jsonify, abort, make_response
 from Scheduler import app, db, updateTutorAvailability
 from sqlite3 import Error
 
-@app.route('/test')
-def test():
-    updateTutorAvailability.eventsFromDB()
+@app.route('/fetchtutoravailability/<id>')
+def fetchAvailability(id):
+    return '', updateTutorAvailability.DBFromEvents(id)
+
+@app.route('/pushtutoravailability/<id>')
+def pushAvailability(id):
+    updateTutorAvailability.eventsFromDB(id)
     return '200'
 
 @app.route('/manage_tutors')
@@ -14,7 +18,7 @@ def manageTutors():
 @app.route('/createtutor', methods=['POST'])
 def createtutor():
     try:
-        attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'comment']
+        attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment']
 
         new_tutor_attributes = []
         args = []
@@ -43,7 +47,7 @@ def createtutor():
 def searchTutors():
     try:
         res = []
-        header = ['id', 'name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'comment']
+        header = ['id', 'name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment']
 
         sql = """
             SELECT * FROM Tutor
@@ -74,7 +78,7 @@ def searchTutors():
 def tutorInfo(tutorid):
     try:
         res = {}
-        header = ['id', 'name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'comment']
+        header = ['id', 'name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment']
 
         sql = """
             SELECT * FROM Tutor
@@ -98,7 +102,7 @@ def tutorInfo(tutorid):
 @app.route('/edittutor/<id>', methods=['PUT'])
 def editTutor(id):
     try:
-        attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'comment']
+        attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment']
 
         setStmt = ''
         args = []
