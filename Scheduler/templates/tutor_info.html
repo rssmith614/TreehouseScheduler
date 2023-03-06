@@ -19,8 +19,8 @@
             <th>Work Email</th>
             <th>Hire Date</th>
             <th>DOB</th>
-            <th>Availability Calendar Link</th>
-            <th>Schedule Calendar Link</th>
+            <th>Availability Calendar ID</th>
+            <th>Schedule Calendar ID</th>
             <th>Comment</th>
         </thead>
         <tbody>
@@ -72,6 +72,10 @@
     </table>
 
     <button onclick="fetchAvailability()">Fetch Availability From Google Calendar</button>
+    <label id="fetchSuccess"></label><br>
+    <button onclick="pushAvailability()">Push This Availability into Next Week's Google Calendar</button>
+    <label id="pushSuccess"></label>
+
 </body>
 
 <script src="{{ url_for('static', filename='manage_tutors.js') }}"></script>

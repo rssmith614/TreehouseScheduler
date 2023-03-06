@@ -105,9 +105,8 @@ def editStudent(id):
 
         for attribute in attributes:
             if attribute in request.json:
-                if request.json[attribute] != '':
-                    setStmt += attribute + ' = ?, '
-                    args.append(request.json[attribute])
+                setStmt += attribute + ' = ?, '
+                args.append(request.json[attribute])
 
         setStmt = setStmt[:len(setStmt)-2]
 
@@ -117,6 +116,8 @@ def editStudent(id):
             WHERE id = ?;""".format(setStmt)
 
         args.append(id)
+
+        print(sql, args)
 
         db.execute(sql, args)
         db.commit()

@@ -81,7 +81,7 @@ function searchTutorsByName() {
 
 function copyLink(link) {
     navigator.clipboard.writeText(link);
-    alert("Copied link to calendar");
+    alert("Copied calendar ID to clipboard");
 }
 
 function deleteTutor(id) {
@@ -105,7 +105,8 @@ function updateTutor() {
     });
 
     xhr.onload = function() {
-        document.getElementById("updateResult").innerHTML = "Done!";
+        if (this.status === 201)
+            document.getElementById("updateResult").innerHTML = "Done!";
     }
 
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -180,8 +181,31 @@ function fetchAvailability() {
     xhr.open("GET", "/fetchtutoravailability/" + document.getElementById("tutorid").innerHTML);
 
     xhr.onload = function () {
+        if (this.status != 200)
+            alert(this.response)
         showAvailability();
+        document.getElementById("fetchSuccess").innerHTML = "";
     }
+
+    document.getElementById("fetchSuccess").innerHTML = "Fetching...";
+
+    xhr.send();
+}
+
+function pushAvailability() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/pushtutoravailability/" + document.getElementById("tutorid").innerHTML);
+
+    xhr.onload = function () {
+        if (this.status == 201)
+            alert("Created events");
+        else
+            alert(this.response);
+
+        document.getElementById("pushSuccess").innerHTML = "";
+    }
+
+    document.getElementById("pushSuccess").innerHTML = "Pushing...";
 
     xhr.send();
 }

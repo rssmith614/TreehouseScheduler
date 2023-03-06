@@ -2,14 +2,13 @@ from flask import request, render_template, jsonify, abort, make_response
 from Scheduler import app, db, updateTutorAvailability
 from sqlite3 import Error
 
-@app.route('/fetchtutoravailability/<id>')
+@app.route('/fetchtutoravailability/<id>', methods=['GET'])
 def fetchAvailability(id):
-    return '', updateTutorAvailability.DBFromEvents(id)
+    return updateTutorAvailability.DBFromEvents(id)
 
-@app.route('/pushtutoravailability/<id>')
+@app.route('/pushtutoravailability/<id>', methods=['POST'])
 def pushAvailability(id):
-    updateTutorAvailability.eventsFromDB(id)
-    return '200'
+    return updateTutorAvailability.eventsFromDB(id)
 
 @app.route('/manage_tutors')
 def manageTutors():
@@ -40,8 +39,9 @@ def createtutor():
 
     except Error as e:
         print(e)
+        return e.args[0], 500
 
-    return ''
+    return '', 201
 
 @app.route('/searchtutors', methods=['GET'])
 def searchTutors():
@@ -72,7 +72,7 @@ def searchTutors():
 
     except Error as e:
         print(e)
-        return abort(404)
+        return e.args[0], 500
     
 @app.route('/tutorinfo/<tutorid>', methods=['GET'])
 def tutorInfo(tutorid):
@@ -93,11 +93,11 @@ def tutorInfo(tutorid):
             else:
                 res.update({name: ''})
 
-        return render_template('tutor_info.html', tutor=res)
+        return render_template('tutor_info.html', tutor=res), 200
     
     except Error as e:
         print(e)
-        return abort(404)
+        return e.args[0], 500
 
 @app.route('/edittutor/<id>', methods=['PUT'])
 def editTutor(id):
@@ -128,8 +128,7 @@ def editTutor(id):
 
     except Error as e:
         print(e)
-
-    return ''
+        return e.args[0], 500
 
 @app.route('/deletetutor/<id>', methods=['DELETE'])
 def deleteTutor(id):
@@ -143,8 +142,9 @@ def deleteTutor(id):
 
     except Error as e:
         print(e)
+        return e.args[0], 500
 
-    return ''
+    return '', 200
 
 @app.route('/addtutoravailability/<id>', methods=['POST'])
 def addTutorAvailability(id):
@@ -161,8 +161,9 @@ def addTutorAvailability(id):
 
     except Error as e:
         print(e)
+        return e.args[0], 500
     
-    return ''
+    return '', 201
 
 @app.route('/edittutoravailability/<id>', methods=['PUT'])
 def editTutorAvailability(id):
@@ -184,9 +185,10 @@ def editTutorAvailability(id):
         db.commit()
 
     except Error as e:
-        print(e)    
+        print(e)
+        return e.args[0], 500
 
-    return ''
+    return '', 201
 
 @app.route('/removetutoravailability/<id>', methods=['DELETE'])
 def removeTutorAvailability(id):
@@ -206,6 +208,9 @@ def removeTutorAvailability(id):
 
     except Error as e:
         print(e)
+        return e.args[0], 500
+    
+    return '', 200
 
 @app.route('/tutoravailability/<tutorid>', methods=['GET'])
 def tutorAvailability(tutorid):
@@ -232,7 +237,7 @@ def tutorAvailability(tutorid):
 
     except Error as e:
         print(e)
-        return abort(404)
+        return e.args[0], 500
 
 @app.route('/tutorswithavailability', methods=['GET'])
 def tutorsWithAvailability():
@@ -270,13 +275,11 @@ def tutorsWithAvailability():
 
         rows = cur.fetchall()
 
-        return rows
+        return jsonify(rows), 200
 
     except Error as e:
         print(e)
-
-
-    return ''
+        return e.args[0], 500
 
 @app.route('/tutorsessionhistory/<tutorid>', methods=['GET'])
 def tutorSessionHistory(tutorid):
@@ -305,4 +308,4 @@ def tutorSessionHistory(tutorid):
 
     except Error as e:
         print(e)
-        return abort(404)
+        return e.args[0], 500
