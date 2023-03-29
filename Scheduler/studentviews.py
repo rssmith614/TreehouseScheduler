@@ -2,6 +2,30 @@ from flask import request, make_response, abort, render_template, jsonify
 from Scheduler import app, db
 from sqlite3 import Error
 
+student_table_header = [
+    'id', 
+    'name', 
+    'nickname', 
+    'parent_id', 
+    'grade', 
+    'school', 
+    'dob', 
+    'reason', 
+    'subjects',
+    'mode',
+    'status', 
+    'gpa', 
+    'address', 
+    'email', 
+    'e_contact_name', 
+    'e_contact_relation', 
+    'e_contact_phone', 
+    'pickup_person', 
+    'pickup_relation', 
+    'pickup_phone', 
+    'medical_comment', 
+    'comment']
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -13,7 +37,8 @@ def manageStudents():
 @app.route('/createstudent', methods=['POST'])
 def createStudent():
     try:
-        attributes = ['name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment']
+        # id is automatically assigned
+        attributes = student_table_header[1:]
 
         new_student_attributes = []
         args = []
@@ -43,7 +68,6 @@ def createStudent():
 def searchStudents():
     try:
         res = []
-        header = ['id', 'name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment']
 
         sql = """
             SELECT * FROM Student
@@ -57,7 +81,7 @@ def searchStudents():
 
         for student in rows:
             cur = {}
-            for name, att in zip(header, student):
+            for name, att in zip(student_table_header, student):
                 if att:
                     cur.update({name: att})
                 else:
@@ -74,7 +98,6 @@ def searchStudents():
 def studentInfo(studentid):
     try:
         res = {}
-        header = ['id', 'name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment']
 
         sql = """
             SELECT * FROM Student
@@ -83,7 +106,7 @@ def studentInfo(studentid):
         cur = db.cursor()
         cur.execute(sql, [studentid])
 
-        for name, att in zip(header, cur.fetchone()):
+        for name, att in zip(student_table_header, cur.fetchone()):
             if att:
                 res.update({name: att})
             else:
@@ -98,7 +121,8 @@ def studentInfo(studentid):
 @app.route('/editstudent/<id>', methods=['PUT'])
 def editStudent(id):
     try:
-        attributes = ['name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment']
+        # id is automatically assigned, cannot be changed
+        attributes = student_table_header[1:]
 
         setStmt = ''
         args = []

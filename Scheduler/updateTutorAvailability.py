@@ -8,6 +8,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from google.auth.exceptions import RefreshError
 
 from Scheduler import db
 from sqlite3 import Error
@@ -28,6 +29,7 @@ def DBFromEvents(id):
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
+            os.remove('token.json')
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(

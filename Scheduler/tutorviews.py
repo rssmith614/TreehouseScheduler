@@ -2,6 +2,24 @@ from flask import request, render_template, jsonify, abort, make_response
 from Scheduler import app, db, updateTutorAvailability
 from sqlite3 import Error
 
+tutor_table_header = [
+    'id',
+    'name', 
+    'nickname', 
+    'primary_phone', 
+    'personal_email', 
+    'work_email', 
+    'mode',
+    'status',
+    'zoom_room_id',
+    'zoom_room_pwd',
+    'hire_date', 
+    'dob', 
+    'avail_calendar', 
+    'sched_calendar', 
+    'comment'
+]
+
 @app.route('/fetchtutoravailability/<id>', methods=['GET'])
 def fetchAvailability(id):
     return updateTutorAvailability.DBFromEvents(id)
@@ -17,7 +35,8 @@ def manageTutors():
 @app.route('/createtutor', methods=['POST'])
 def createtutor():
     try:
-        attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment']
+        # id is automatically generated
+        attributes = tutor_table_header[1:]
 
         new_tutor_attributes = []
         args = []
@@ -47,7 +66,6 @@ def createtutor():
 def searchTutors():
     try:
         res = []
-        header = ['id', 'name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment']
 
         sql = """
             SELECT * FROM Tutor
@@ -61,7 +79,7 @@ def searchTutors():
 
         for tutor in rows:
             cur = {}
-            for name, att in zip(header, tutor):
+            for name, att in zip(tutor_table_header, tutor):
                 if att:
                     cur.update({name: att})
                 else:
@@ -78,7 +96,6 @@ def searchTutors():
 def tutorInfo(tutorid):
     try:
         res = {}
-        header = ['id', 'name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment']
 
         sql = """
             SELECT * FROM Tutor
@@ -87,7 +104,7 @@ def tutorInfo(tutorid):
         cur = db.cursor()
         cur.execute(sql, [tutorid])
 
-        for name, att in zip(header, cur.fetchone()):
+        for name, att in zip(tutor_table_header, cur.fetchone()):
             if att:
                 res.update({name: att})
             else:
@@ -102,7 +119,8 @@ def tutorInfo(tutorid):
 @app.route('/edittutor/<id>', methods=['PUT'])
 def editTutor(id):
     try:
-        attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment']
+        # id is automatically assigned, cannot be changed
+        attributes = tutor_table_header[1:]
 
         setStmt = ''
         args = []
