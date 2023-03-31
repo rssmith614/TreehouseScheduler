@@ -1,3 +1,10 @@
+################
+# studentviews.py
+# author: Robert Smith
+# 
+# This script manages the flask app routes for any functions relating to modifications on student data
+################
+
 from flask import request, send_from_directory, render_template, jsonify
 from Scheduler import app, db
 from sqlite3 import Error
@@ -5,6 +12,9 @@ from sqlite3 import Error
 import csv
 import os
 
+# this is the header for the Student table in the database
+# if the database changes, this needs to change
+# the rest of this script refers to this list
 student_table_header = [
     'id', 
     'name', 
@@ -32,14 +42,18 @@ student_table_header = [
 
 @app.route('/')
 def index():
+    # Temporary home page
     return render_template('index.html')
 
 @app.route('/manage_students')
 def manageStudents():
+    # Page to display all student data
     return render_template('manage_students.html')
 
 @app.route('/downloadstudentdata', methods=['GET'])
 def downloadStudentData():
+    # Materialize the Student table in the database as it is now
+    # Create a download as a .csv file
     try:
         cur = db.cursor()
         data = cur.execute("SELECT * FROM Student")
@@ -61,6 +75,11 @@ def downloadStudentData():
 
 @app.route('/createstudent', methods=['POST'])
 def createStudent():
+    # Generate a new record for a student
+    # request should contain json with assignment for every attribute in
+    # student_table_header (except for id)
+    # if the request doesn't have every value, empty strings are assigned
+    # this may throw errors when database constraints fail
     try:
         # id is automatically assigned
         attributes = student_table_header[1:]
@@ -91,6 +110,8 @@ def createStudent():
     
 @app.route('/searchstudents', methods=['GET'])
 def searchStudents():
+    # Query the database for every student based on their name
+    # request may have 'name' argument as a search parameter
     try:
         res = []
 
@@ -121,6 +142,7 @@ def searchStudents():
     
 @app.route('/studentinfo/<studentid>', methods=['GET'])
 def studentInfo(studentid):
+    # Collect all attributes on a specific student, identified by unique id attribute
     try:
         res = {}
 
@@ -145,6 +167,9 @@ def studentInfo(studentid):
 
 @app.route('/editstudent/<id>', methods=['PUT'])
 def editStudent(id):
+    # Edit any attributes for a specific student, identified by unique id
+    # request json should contain keys from student_table_header whose values are to be changed
+    # {"name": "New Name"} when id = 1 will change student 1's name to "New Name" 
     try:
         # id is automatically assigned, cannot be changed
         attributes = student_table_header[1:]
@@ -177,6 +202,7 @@ def editStudent(id):
 
 @app.route('/deletestudent/<id>', methods=['DELETE'])
 def deleteStudent(id):
+    # Remove a specific student from the database, identified by unique id
     try:
         sql = """
             DELETE FROM Student
@@ -193,6 +219,9 @@ def deleteStudent(id):
 
 @app.route('/addstudentavailability/<id>', methods=['POST'])
 def addStudentAvailability(id):
+    # Create an availability for a specific student
+    # request json needs keys "day", "start", and "finish"
+    # database constraints will make this throw errors, so be careful
     try:
         sql= """
             INSERT INTO Student_Availability
@@ -212,6 +241,9 @@ def addStudentAvailability(id):
 
 @app.route('/editstudentavailability/<id>', methods=['PUT'])
 def editStudentAvailability(id):
+    # Change an availability entry in the database for a specific student
+    # since day, start, and finish times are unique to each student, all are needed to do edits
+    # you can see the required json keys on the following few lines
     try:
         oldStart = request.json['oldStart']
         oldFinish = request.json['oldFinish']
@@ -237,6 +269,8 @@ def editStudentAvailability(id):
 
 @app.route('/removestudentavailability/<id>', methods=['DELETE'])
 def removeStudentAvailability(id):
+    # Delete a specific student availability from the database
+    # availability is unique based on id, day, start, and finish, so all are needed
     try:
         day = request.json['day']
         start = request.json['start']
@@ -259,6 +293,7 @@ def removeStudentAvailability(id):
     
 @app.route('/studentavailability/<studentid>', methods=['GET'])
 def studentAvailability(studentid):
+    # Get every availability for a specific student, unique student id
     try:
         res = []
 
@@ -286,6 +321,7 @@ def studentAvailability(studentid):
     
 @app.route('/studentsessionhistory/<studentid>', methods=['GET'])
 def studentSessionHistory(studentid):
+    # Get every session involving a specific student
     try:
         res = []
         header = ['tutor_name', 'date', 'start', 'finish']
@@ -298,7 +334,7 @@ def studentSessionHistory(studentid):
             ORDER BY date DESC;"""
         
         cur = db.cursor()
-        cur.execute(sql, [studentid])
+        cur.execute(sql, [int(studentid)])
         rows = cur.fetchall()
 
         for session in rows:

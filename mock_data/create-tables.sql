@@ -1,3 +1,4 @@
+-- define database schema
 BEGIN;
 DROP TABLE IF EXISTS Parent;
 DROP TABLE IF EXISTS Student;

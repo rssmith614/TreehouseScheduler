@@ -1,3 +1,4 @@
+-- load all mock data into the database
 .mode csv
 .separator ','
 

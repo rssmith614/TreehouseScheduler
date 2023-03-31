@@ -1,7 +1,17 @@
+###############
+# tutorviews.py
+# author: Robert Smith
+
+# This script manages all flask routes for interactions with and modifications on tutor data
+###############
+
 from flask import request, render_template, jsonify, abort, make_response
 from Scheduler import app, db, updateTutorAvailability
 from sqlite3 import Error
 
+# this list is the header of the Tutor table in the database
+# if the database schema changes, this must change
+# the rest of this script refers to this list
 tutor_table_header = [
     'id',
     'name', 
@@ -22,18 +32,29 @@ tutor_table_header = [
 
 @app.route('/fetchtutoravailability/<id>', methods=['GET'])
 def fetchAvailability(id):
+    # call the Google Calendar API to get all availability for a specific tutor for the week
+    # then push the new availability into the database
+    # this is DESTRUCTIVE, if the API call is successful, all of the tutor's current availability is DELETED
     return updateTutorAvailability.DBFromEvents(id)
 
 @app.route('/pushtutoravailability/<id>', methods=['POST'])
 def pushAvailability(id):
+    # call the Google Calendar API to create events in a specific tutor's calendar next week based on
+    # the availability currently stored in the database
     return updateTutorAvailability.eventsFromDB(id)
 
 @app.route('/manage_tutors')
 def manageTutors():
+    # Page to display all tutor data
     return render_template('manage_tutors.html')
 
 @app.route('/createtutor', methods=['POST'])
 def createtutor():
+    # Generate a new record for a tutor
+    # request should contain json with assignment for every attribute in
+    # tutor_table_header (except for id)
+    # if the request doesn't have every value, empty strings are assigned
+    # this may throw errors when database constraints fail
     try:
         # id is automatically generated
         attributes = tutor_table_header[1:]
@@ -64,6 +85,8 @@ def createtutor():
 
 @app.route('/searchtutors', methods=['GET'])
 def searchTutors():
+    # Query the database for every tutor based on their name
+    # request may have 'name' argument as a search parameter
     try:
         res = []
 
@@ -94,6 +117,7 @@ def searchTutors():
     
 @app.route('/tutorinfo/<tutorid>', methods=['GET'])
 def tutorInfo(tutorid):
+    # Collect all attributes on a specific student, identified by unique id attribute
     try:
         res = {}
 
@@ -118,6 +142,9 @@ def tutorInfo(tutorid):
 
 @app.route('/edittutor/<id>', methods=['PUT'])
 def editTutor(id):
+    # Edit any attributes for a specific tutor, identified by unique id
+    # request json should contain keys from tutor_table_header whose values are to be changed
+    # {"name": "New Name"} when id = 1 will change tutor 1's name to "New Name" 
     try:
         # id is automatically assigned, cannot be changed
         attributes = tutor_table_header[1:]
@@ -150,6 +177,7 @@ def editTutor(id):
 
 @app.route('/deletetutor/<id>', methods=['DELETE'])
 def deleteTutor(id):
+    # Remove a specific tutor from the database, identified by unique id
     try:
         sql = """
             DELETE FROM Tutor
@@ -166,6 +194,9 @@ def deleteTutor(id):
 
 @app.route('/addtutoravailability/<id>', methods=['POST'])
 def addTutorAvailability(id):
+    # Create an availability for a specific tutor
+    # request json needs keys "day", "start", and "finish"
+    # database constraints will make this throw errors, so be careful
     try:
         sql= """
             INSERT INTO Tutor_Availability
@@ -185,6 +216,9 @@ def addTutorAvailability(id):
 
 @app.route('/edittutoravailability/<id>', methods=['PUT'])
 def editTutorAvailability(id):
+    # Change an availability entry in the database for a specific tutor
+    # since day, start, and finish times are unique to each tutor, all are needed to do edits
+    # you can see the required json keys on the following few lines
     try:
         oldStart = request.json['oldStart']
         oldFinish = request.json['oldFinish']
@@ -210,6 +244,8 @@ def editTutorAvailability(id):
 
 @app.route('/removetutoravailability/<id>', methods=['DELETE'])
 def removeTutorAvailability(id):
+    # Delete a specific tutor availability from the database
+    # availability is unique based on id, day, start, and finish, so all are needed
     try:
         day = request.json['day']
         start = request.json['start']
@@ -232,6 +268,7 @@ def removeTutorAvailability(id):
 
 @app.route('/tutoravailability/<tutorid>', methods=['GET'])
 def tutorAvailability(tutorid):
+    # Get every availability for a specific tutor, unique tutor id
     try:
         res = []
 
@@ -259,6 +296,9 @@ def tutorAvailability(tutorid):
 
 @app.route('/tutorswithavailability', methods=['GET'])
 def tutorsWithAvailability():
+    # Proof of concept query
+    # get tutors with a specified availability (request json "day" and "start")
+    # show how many times each tutor has worked with a specified student (request json "student_id")
     try:
         start = request.json['start']
         day = request.json['day']
@@ -301,6 +341,7 @@ def tutorsWithAvailability():
 
 @app.route('/tutorsessionhistory/<tutorid>', methods=['GET'])
 def tutorSessionHistory(tutorid):
+    # Get every session involving a specific tutor
     try:
         res = []
         header = ['student_name', 'date', 'start', 'finish']
@@ -313,7 +354,7 @@ def tutorSessionHistory(tutorid):
             ORDER BY date DESC;"""
         
         cur = db.cursor()
-        cur.execute(sql, [tutorid])
+        cur.execute(sql, [int(tutorid)])
         rows = cur.fetchall()
 
         for session in rows:

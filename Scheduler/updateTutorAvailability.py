@@ -42,10 +42,11 @@ def DBFromEvents(id):
     try:
         service = build('calendar', 'v3', credentials=creds)
 
-        # Call the Calendar API
+        # calculate relative dates
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
         oneWeekFromNow = (datetime.datetime.utcnow() + datetime.timedelta(days=7)).isoformat() + 'Z'
 
+        # get the calendar id of the current tutor
         sql = """
             SELECT avail_calendar FROM Tutor WHERE id = ?"""
         cur = db.cursor()
@@ -53,15 +54,18 @@ def DBFromEvents(id):
 
         calendarId = cur.fetchone()[0]
         
+        # Call the Calendar API
         events_result = service.events().list(calendarId=calendarId, timeMin=now,
                                               timeMax=oneWeekFromNow, singleEvents=True,
                                               orderBy='startTime').execute()
         events = events_result.get('items', [])
 
+        # remove known availability from the database
         sql = """
                 DELETE FROM Tutor_Availability WHERE tutor_id = ?;"""
         db.execute(sql, [id])
 
+        # create an entry in the database for every event fetched from Google Calendar
         for event in events:
             start = event['start'].get('dateTime')
             end = event['end'].get('dateTime')
@@ -118,6 +122,7 @@ def eventsFromDB(id):
     try:
         service = build('calendar', 'v3', credentials=creds)
 
+        # get the calendar id for the current tutor
         sql = """
             SELECT avail_calendar FROM Tutor WHERE id = ?"""
         cur = db.cursor()
@@ -125,14 +130,15 @@ def eventsFromDB(id):
 
         calendarId = cur.fetchone()[0]
 
-        # Call the Calendar API
-        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        
+        # get all availabilities of the current tutor known in the database
         sql = """SELECT * FROM Tutor_Availability WHERE tutor_id = ?;"""
         cur = db.cursor()
         cur.execute(sql, [id])
 
         availablities = cur.fetchall()
 
+        # create a Google Calendar event for every availability in the database
         for availablity in availablities:
             # format 2023-02-25T09:00:00-07:00
             date = next_weekday(datetime.date.today() + datetime.timedelta(days=7), availablity[1]).isoformat()
@@ -150,7 +156,6 @@ def eventsFromDB(id):
                     'timeZone': 'America/Los_Angeles'
                 }
             }
-            # print(date, start, end)
             event = service.events().insert(calendarId=calendarId, body=event).execute()
             print('event created:', event.get('htmlLink'))
 
