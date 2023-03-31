@@ -1,3 +1,21 @@
+let tutor_table_header = [
+    'id',
+    'name', 
+    'nickname', 
+    'primary_phone', 
+    'personal_email', 
+    'work_email', 
+    'mode',
+    'status',
+    'zoom_room_id',
+    'zoom_room_pwd',
+    'hire_date', 
+    'dob', 
+    'avail_calendar', 
+    'sched_calendar', 
+    'comment'
+]
+
 function createTutor() {
     var name = document.getElementById("name").value;
     var nickname = document.getElementById("nickname").value;
@@ -5,6 +23,10 @@ function createTutor() {
     var personal_email = document.getElementById("personal_email").value;
     var work_email = document.getElementById("work_email").value;
     var hire_date = document.getElementById("hire_date").value;
+    var mode = document.getElementById("mode").value;
+    var status = document.getElementById("status").value;
+    var zoom_room_id = document.getElementById("zoom_room_id").value;
+    var zoom_room_pwd = document.getElementById("zoom_room_pwd").value;
     var dob = document.getElementById("dob").value;
     var avail_calendar = document.getElementById("avail_calendar").value;
     var sched_calendar = document.getElementById("sched_calendar").value;
@@ -17,6 +39,10 @@ function createTutor() {
       "personal_email": personal_email,
       "work_email": work_email,
       "hire_date": hire_date,
+      "mode": mode,
+      "status": status,
+      "zoom_room_id": zoom_room_id,
+      "zoom_room_pwd": zoom_room_pwd,
       "dob": dob,
       "avail_calendar": avail_calendar,
       "sched_calendar": sched_calendar,
@@ -33,6 +59,10 @@ function createTutor() {
         document.getElementById("personal_email").value = "";
         document.getElementById("work_email").value = "";
         document.getElementById("hire_date").value = "";
+        document.getElementById("mode").value = "";
+        document.getElementById("status").value = "";
+        document.getElementById("zoom_room_id").value = "";
+        document.getElementById("zoom_room_pwd").value = "";
         document.getElementById("dob").value = "";
         document.getElementById("avail_calendar").value = "";
         document.getElementById("sched_calendar").value = "";
@@ -51,7 +81,8 @@ function searchTutorsByName() {
     xhr.onload = function() {
         data = JSON.parse(this.response);
         res = "";
-        header = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment'];
+        // we add the id to the header manually
+        header = tutor_table_header.slice(1);
 
         data.forEach(tutor => {
             res += "<tr>";
@@ -99,7 +130,8 @@ function updateTutor() {
     var xhr = new XMLHttpRequest();
     xhr.open("PUT", "/edittutor/" + document.getElementById("tutorid").innerHTML);
     data = {};
-    attributes = ['name', 'nickname', 'primary_phone', 'personal_email', 'work_email', 'hire_date', 'dob', 'avail_calendar', 'sched_calendar', 'comment'];
+    // not allowed to modify id
+    attributes = tutor_table_header.slice(1);
     attributes.forEach(att => {
         data[att] = document.getElementById(att).value;
     });
@@ -107,6 +139,8 @@ function updateTutor() {
     xhr.onload = function() {
         if (this.status === 201)
             document.getElementById("updateResult").innerHTML = "Done!";
+        else
+            alert(this.response);
     }
 
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");

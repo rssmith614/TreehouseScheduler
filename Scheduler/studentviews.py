@@ -1,6 +1,9 @@
-from flask import request, make_response, abort, render_template, jsonify
+from flask import request, send_from_directory, render_template, jsonify
 from Scheduler import app, db
 from sqlite3 import Error
+
+import csv
+import os
 
 student_table_header = [
     'id', 
@@ -24,7 +27,8 @@ student_table_header = [
     'pickup_relation', 
     'pickup_phone', 
     'medical_comment', 
-    'comment']
+    'comment'
+]
 
 @app.route('/')
 def index():
@@ -33,6 +37,27 @@ def index():
 @app.route('/manage_students')
 def manageStudents():
     return render_template('manage_students.html')
+
+@app.route('/downloadstudentdata', methods=['GET'])
+def downloadStudentData():
+    try:
+        cur = db.cursor()
+        data = cur.execute("SELECT * FROM Student")
+
+        export_loc = app.root_path
+        filename = 'students_export.csv'
+
+        with open(os.path.join(export_loc, filename), 'w') as f:
+            writer = csv.writer(f)
+            writer.writerow(student_table_header)
+            writer.writerows(data)
+            f.close()
+
+        return send_from_directory(os.path.join(export_loc), os.path.join(filename), as_attachment=True)
+
+    except Error as e:
+        print(e)
+        return e.args[0], 500
 
 @app.route('/createstudent', methods=['POST'])
 def createStudent():
@@ -62,7 +87,7 @@ def createStudent():
         
     except Error as e:
         print(e)
-        return abort(400)
+        return e.args[0], 500
     
 @app.route('/searchstudents', methods=['GET'])
 def searchStudents():
@@ -92,7 +117,7 @@ def searchStudents():
 
     except Error as e:
         print(e)
-        return abort(404)
+        return e.args[0], 500
     
 @app.route('/studentinfo/<studentid>', methods=['GET'])
 def studentInfo(studentid):
@@ -116,7 +141,7 @@ def studentInfo(studentid):
     
     except Error as e:
         print(e)
-        return abort(404)
+        return e.args[0], 500
 
 @app.route('/editstudent/<id>', methods=['PUT'])
 def editStudent(id):
@@ -141,16 +166,14 @@ def editStudent(id):
 
         args.append(id)
 
-        print(sql, args)
-
         db.execute(sql, args)
         db.commit()
 
-        return {}, 200
+        return {}, 201
 
     except Error as e:
         print(e)
-        return abort(400)
+        return e.args[0], 500
 
 @app.route('/deletestudent/<id>', methods=['DELETE'])
 def deleteStudent(id):
@@ -166,8 +189,7 @@ def deleteStudent(id):
 
     except Error as e:
         print(e)
-
-    return ''
+        return e.args[0], 500
 
 @app.route('/addstudentavailability/<id>', methods=['POST'])
 def addStudentAvailability(id):
@@ -186,7 +208,7 @@ def addStudentAvailability(id):
 
     except Error as e:
         print(e)
-        return abort(400)
+        return e.args[0], 500
 
 @app.route('/editstudentavailability/<id>', methods=['PUT'])
 def editStudentAvailability(id):
@@ -207,11 +229,11 @@ def editStudentAvailability(id):
         db.execute(sql, args)
         db.commit()
 
-        return {}, 200
+        return {}, 201
 
     except Error as e:
-        print(e)    
-        return abort(400)
+        print(e)
+        return e.args[0], 500
 
 @app.route('/removestudentavailability/<id>', methods=['DELETE'])
 def removeStudentAvailability(id):
@@ -233,7 +255,7 @@ def removeStudentAvailability(id):
 
     except Error as e:
         print(e)
-        return abort(400)
+        return e.args[0], 500
     
 @app.route('/studentavailability/<studentid>', methods=['GET'])
 def studentAvailability(studentid):
@@ -260,7 +282,7 @@ def studentAvailability(studentid):
 
     except Error as e:
         print(e)
-        return abort(404)
+        return e.args[0], 500
     
 @app.route('/studentsessionhistory/<studentid>', methods=['GET'])
 def studentSessionHistory(studentid):
@@ -289,4 +311,4 @@ def studentSessionHistory(studentid):
 
     except Error as e:
         print(e)
-        return abort(404)
+        return e.args[0], 500

@@ -26,5 +26,3 @@ DROP TABLE session_import;
 COMMIT;
 
 .exit
-
-SELECT * FROM Tutor_Availability ORDER BY tutor_id, start, finish;

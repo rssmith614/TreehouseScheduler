@@ -1,8 +1,32 @@
+let student_table_header = [
+    'id', 
+    'name', 
+    'nickname', 
+    'parent_id', 
+    'grade', 
+    'school', 
+    'dob', 
+    'reason', 
+    'subjects',
+    'mode',
+    'status', 
+    'gpa', 
+    'address', 
+    'email', 
+    'e_contact_name', 
+    'e_contact_relation', 
+    'e_contact_phone', 
+    'pickup_person', 
+    'pickup_relation', 
+    'pickup_phone', 
+    'medical_comment', 
+    'comment'
+]
+
 function createStudent() {
     var name = document.getElementById("name").value;
     var nickname = document.getElementById("nickname").value;
-    var parent_name = document.getElementById("parent_name").value;
-    var primary_phone = document.getElementById("primary_phone").value;
+    var parent_name = document.getElementById("parent_id").value;
     var grade = document.getElementById("grade").value;
     var school = document.getElementById("school").value;
     var dob = document.getElementById("dob").value;
@@ -23,8 +47,7 @@ function createStudent() {
     var student = {
         "name": name,
         "nickname": nickname,
-        "parent_name": parent_name,
-        "primary_phone": primary_phone,
+        "parent_id": parent_id,
         "grade": grade,
         "school": school,
         "dob": dob,
@@ -62,7 +85,8 @@ function searchStudentsByName() {
     xhr.onload = function() {
         data = JSON.parse(this.response);
         res = "";
-        header = ['name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment'];
+        // we add the id to the header manually
+        header = student_table_header.slice(1);
 
         data.forEach(student => {
             res += "<tr>";
@@ -95,13 +119,17 @@ function updateStudent() {
     var xhr = new XMLHttpRequest();
     xhr.open("PUT", "/editstudent/" + document.getElementById("studentid").innerHTML);
     data = {};
-    attributes = ['name', 'nickname', 'parent_name', 'primary_phone', 'grade', 'school', 'dob', 'reason', 'subjects', 'gpa', 'address', 'email', 'e_contact_name', 'e_contact_relation', 'e_contact_phone', 'pickup_person', 'pickup_relation', 'pickup_phone', 'medical_comment', 'comment'];
+    // not allowed to modify the id
+    attributes = student_table_header.slice(1);
     attributes.forEach(att => {
         data[att] = document.getElementById(att).value;
     });
 
     xhr.onload = function() {
-        document.getElementById("updateResult").innerHTML = "Done!";
+        if (this.status === 201)
+            document.getElementById("updateResult").innerHTML = "Done!";
+        else
+            alert(this.response);
     }
 
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");

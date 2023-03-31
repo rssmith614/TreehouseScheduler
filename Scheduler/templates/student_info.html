@@ -14,13 +14,14 @@
             <th>Student ID</th>
             <th>Name</th>
             <th>Nickname</th>
-            <th>Parent Name</th>
-            <th>Primary Phone</th>
+            <th>Parent</th>
             <th>Grade</th>
             <th>School</th>
             <th>DOB</th>
             <th>Reason</th>
             <th>Subjects</th>
+            <th>Mode</th>
+            <th>Status</th>
             <th>GPA</th>
         </thead>
         <tbody>
@@ -28,13 +29,14 @@
                 <td id="studentid">{{ student.id }}</td>
                 <td><input type="text" id="name" value="{{ student.name }}"></td>
                 <td><input type="text" id="nickname" value="{{ student.nickname }}"></td>
-                <td><input type="text" id="parent_name" value="{{ student.parent_name }}"></td>
-                <td><input type="text" id="primary_phone" value="{{ student.primary_phone }}"></td>
+                <td><input type="text" id="parent_id" value="{{ student.parent_id }}"></td>
                 <td><input type="text" id="grade" value="{{ student.grade }}"></td>
                 <td><input type="text" id="school" value="{{ student.school }}"></td>
                 <td><input type="text" id="dob" value="{{ student.dob }}"></td>
                 <td><input type="text" id="reason" value="{{ student.reason }}"></td>
                 <td><input type="text" id="subjects" value="{{ student.subjects }}"></td>
+                <td><input type="text" id="mode" value="{{ student.mode }}"></td>
+                <td><input type="text" id="status" value="{{ student.status }}"></td>
                 <td><input type="text" id="gpa" value="{{ student.gpa }}"></td>
             </tr>
         </tbody>

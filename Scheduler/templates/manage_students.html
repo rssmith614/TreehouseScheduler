@@ -17,13 +17,14 @@
             <th>Student ID</th>
             <th>Name</th>
             <th>Nickname</th>
-            <th>Parent Name</th>
-            <th>Primary Phone</th>
+            <th>Parent</th>
             <th>Grade</th>
             <th>School</th>
             <th>DOB</th>
             <th>Reason</th>
             <th>Subjects</th>
+            <th>Mode</th>
+            <th>Status</th>
             <th>GPA</th>
             <th>Address</th>
             <th>Email</th>
@@ -41,32 +42,36 @@
         </tbody>
     </table>
 
+    <a href="{{ url_for('downloadStudentData')}}">Download Student Data as CSV</a>
+
     <h2>Create new Student</h2><br>
     <form onsubmit="createStudent(); searchStudentsByName(); return false;">
         <table>
             <thead>
                 <th>Name</th>
                 <th>Nickname</th>
-                <th>Parent Name</th>
-                <th>Primary Phone</th>
+                <th>Parent</th>
                 <th>Grade</th>
                 <th>School</th>
                 <th>DOB</th>
                 <th>Reason</th>
                 <th>Subjects</th>
+                <th>Mode</th>
+                <th>Status</th>
                 <th>GPA</th>
             </thead>
             <tbody>
                 <tr>
                     <td><input type="text" id="name"></td>
                     <td><input type="text" id="nickname"></td>
-                    <td><input type="text" name="parent_name"}}"></td>
-                    <td><input type="text" name="primary_phone"></td>
+                    <td><input type="text" name="parent_id"></td>
                     <td><input type="text" name="grade"></td>
                     <td><input type="text" name="school"></td>
                     <td><input type="text" name="dob"></td>
                     <td><input type="text" name="reason"></td>
                     <td><input type="text" name="subjects"></td>
+                    <td><input type="text" name="mode"></td>
+                    <td><input type="text" name="status"></td>
                     <td><input type="text" name="gpa"></td>
                 </tr>
             </tbody>
@@ -87,7 +92,7 @@
             <body>
                 <tr>
                     <td><input type="text" name="address"></td>
-                    <td><input type="text" name="email"}></td>
+                    <td><input type="text" name="email"></td>
                     <td><input type="text" name="emergency_contact_name"></td>
                     <td><input type="text" name="emergency_contact_relation"></td>
                     <td><input type="text" name="emergency_contact_phone"></td>
